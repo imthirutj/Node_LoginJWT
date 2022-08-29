@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+  <head>
+    <title>index</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>  
+    <link rel="stylesheet" href="style.css">
+</head>
+
+  <body>
+    <div class="profile" style="color: white;">
+    <h1> Home Page- Profile</h1>
+    <h2 id="name">Name  :</h2>
+    <h2 id="role">Role  :</h2>
+    <h2 id="age">age    :</h2>
+    <br>
+
+    <a href="change-pwd.html">Change Password</a>
+    <br>
+    <a href="update-myuser.html">Edit My Profile</a>
+    <br>
+    </div>
+
+    <div>
+        <button onclick="logout()">Log out</button>
+    </div>
+
+    <script>
+        userProfile();
+           async function userProfile(){
+           const result = await fetch('/api/user-profile?token='+localStorage.getItem('token')
+        //    ,{
+        //         method:'GET',
+        //         headers:{
+        //             'Content-Type':'application/json'
+        //         },
+        //         body:JSON.stringify({
+                   
+        //             token:localStorage.getItem('token')
+        //         })
+        //     }
+            ).then(res=> res.json());
+
+            if(result.status === 'OK'){
+                alert('Success, Welcome ' + result.data.name);
+                
+                    $('#name').text(
+                        $('#name').text()+result.data.name
+                    );
+
+                    $('#age').text(
+                        $('#age').text()+result.data.age
+                    );
+
+                    $('#role').text(
+                        $('#role').text()+result.data.role
+                    );
+
+                    if(result.data.role == 'admin'){
+                          $('.profile').append(
+                          $(document.createElement('a')).prop({
+                          target: '_blank',
+                          href: 'list-users.html',
+                          innerText: 'Users List'
+                          })
+                        ).append(
+                            $(document.createElement('br'))
+                        );
+                    }
+              
+            }else{
+                alert(result.error);
+                window.location = "login.html";
+            }
+           
+           }
+
+           async function logout(){
+     
+          
+                if (localStorage.getItem('token') === null){
+                  return false;}
+                localStorage.removeItem('token');
+                alert('Log out Successful');
+                window.location = "login.html";
+                return true;
+                
+            
+                }
+           
+    </script>
+  </body>
+</html>

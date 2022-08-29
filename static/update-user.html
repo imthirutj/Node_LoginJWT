@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+  <head>
+    <title>index</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <h1 style="color:white ;"> Home Page- update</h1>
+    <form class="container" id="reg-form" >
+      <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Name"><br>
+
+        <label for="role">Role</label>
+        <select  id="role">
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+           
+          </select><br>
+
+          <label for="username">User Name</label>
+        <input name="username" type="text" id="username" placeholder="Username"><br>
+
+        <label for="age">Age</label>
+        <input name="age" type="number" id="age" placeholder="Age"><br>
+        
+        <input type="submit" value="submit">
+    </form>
+
+    <script>
+        
+
+        userProfile();
+           async function userProfile(){
+
+           
+            const params = new URLSearchParams(window.location.search);
+            const username= params.get('username');
+
+           const result = await fetch('/api/get-user-toupdate?username='+username+'&token='+localStorage.getItem('token'))
+           .then(res=>res.json());
+            
+            console.log(result);
+           document.getElementById('username').value= result.data.username;
+           document.getElementById('name').value= result.data.name;
+           document.getElementById('role').value= result.data.role;
+           document.getElementById('age').value= result.data.age;
+            
+            
+
+           }
+
+
+
+           const form = document.getElementById("reg-form");
+
+          form.addEventListener('submit',updateUser);
+
+          async function updateUser(event){
+    event.preventDefault()
+    const name= document.getElementById("name").value;
+    const username=document.getElementById("username").value;
+   
+    const role    =document.getElementById("role").value;
+    const age    =document.getElementById("age").value;
+
+   const result = await fetch('/api/user-update',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+            name,username, role , age, token:localStorage.getItem('token')
+        })
+    }).then(res=> res.json());
+
+    if(result.status === 'OK'){
+        alert('Success, updated');
+        window.location = "list-users.html";
+    }else{
+        alert(result.error);
+    }
+    console.log(result);
+}
+
+    </script>
+  </body>
+</html>

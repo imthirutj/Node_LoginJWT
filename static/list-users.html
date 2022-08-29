@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+  <head>
+    <title>index</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>  
+    <link rel="stylesheet" href="style.css">
+</head>
+
+  <body>
+ <h1 style="color: white;">List User</h1>
+
+    <div id="log" style="color: white;">
+       
+    </div>
+    <div style="color: white ;">
+      <button onclick="logout()">Log out</button>
+    </div>
+
+    <div style="color: white ;">
+     <a href="profile.html">My Profile</a>
+    </div>
+
+    <script>
+        userList();
+           async function userList(){
+           const result = await fetch('/api/list-users'
+           ,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                   
+                    token:localStorage.getItem('token')
+                })
+            }
+            ).then(res=> res.json());
+
+            if(result.status === 'OK'){
+                alert('Success, Welcome ');
+                result.data.forEach(element => {
+                   var mydiv= document.createElement('div');
+                   mydiv.innerHTML=element.name;
+                   mydiv.innerHTML+='<br> Age:'+element.age;
+
+                   var anc= document.createElement('a');
+                   anc.innerHTML="Edit";
+                   anc.href='/update-user.html?username='+element.username+'&token='+localStorage.getItem('token');
+
+                   var br = document.createElement("hr");
+                  
+
+                   var div= document.getElementById('log');
+                   div.appendChild(mydiv);
+                   div.appendChild(anc);
+                   div.appendChild(br);div.appendChild(br);
+                   
+                });
+              
+            }else{
+                alert(result.error);
+                window.location = "login.html";
+            }
+           
+           }
+
+           async function logout(){
+            
+          
+                if (localStorage.getItem('token') === null){
+                  return false;}
+                localStorage.removeItem('token');
+                alert('Log out Successful');
+                window.location = "login.html";
+                return true;
+                
+            
+                }
+           
+    </script>
+  </body>
+</html>

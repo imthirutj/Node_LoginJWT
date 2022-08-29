@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+  <head>
+    <title>index</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body>
+    <h1> chNGE pWD</h1>
+    <form id="reg-form">
+       <input type="password" id="password" placeholder="New PAssword">
+        <input type="submit" value="submit">
+    </form>
+
+    <script>
+        const form = document.getElementById("reg-form");
+
+        form.addEventListener('submit',changePwd);
+
+        async function changePwd(event){
+            event.preventDefault()
+           
+            const password=document.getElementById("password").value;
+
+           const result = await fetch('/api/change-pwd',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    newPassword:password,
+                    token:localStorage.getItem('token')
+                })
+            }).then(res=> res.json());
+
+            if(result.status === 'OK'){
+                alert('Success');
+                window.location='profile.html';
+            }else{
+                alert(result.error);
+            }
+            console.log(result);
+        }
+    </script>
+  </body>
+</html>
